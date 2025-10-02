@@ -53,7 +53,7 @@ Maven
 - Layered structure: controller, service, provider, client
 - 3d party integration with https://api.aviationapi.com  
 Observability: 
-- Spring Actuator /health and /info endpoints
+- Spring Actuator endpoints: health, info, loggers (non-prod profiles)
 
 ### Trade-offs
 - [Time limit] JsonNode used to handle JSON response from third party - probably we'll need fields mapping on our side
