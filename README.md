@@ -1,10 +1,8 @@
 # Aviation API Wrapper
 
 [Overview](#overview)  
-[Task](#task)  
-[Evaluation criteria](#evaluation-criteria)  
-[Assumptions](#assumptions)  
-[Chosen Tech stack](#chosen-tech-stack)
+[Requirements](#requirements)  
+[Proposed solution](#solution)
 
 
 ### Overview
@@ -12,6 +10,7 @@
 Example microservice on Java + Spring Boot microservice that integrates with a public aviation
 data API to retrieve information about airports based on ICAO codes
 
+## Requirements
 ### Task
 
 Design and implement a microservice that:
@@ -36,8 +35,25 @@ Key focus areas:
 - Only the ICAO code lookup is in scope.
 - No user management is required.
 
+## Solution
+
 ### Chosen Tech stack
 
 Java 21  
 Spring Boot 3.5.6  
 Maven  
+
+### My assumptions
+- it's a public endpoint. I assume basic auth (like DDoS protection) will be available on the firewall/gateway level
+
+### Implementation
+- Layered structure: controller, service, provider, client
+- 3d party integration with https://api.aviationapi.com
+
+### Trade-offs
+- [Time limit] JsonNode used to handle JSON response from third party - probably we'll need fields mapping on our side
+- [Time limit] logs injection with user input (ICAO code) - that needs either input validation or no input logging
+
+### Next Steps
+- Add validation for input ICAO code - that will lower incorrect requests earlier than they reach 3d party side
+- Add caching (Redis or other) - GET endpoint with rarely changed info is a perfect candidate for caching - that will significantly reduce the load for 3d party requests. Proposed TTL 1h-24h
