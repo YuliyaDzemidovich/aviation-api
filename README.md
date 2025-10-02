@@ -43,12 +43,17 @@ Java 21
 Spring Boot 3.5.6  
 Maven  
 
+### Time spent
+- 1.5h on MVC (basic functionality, basic logging, layered structure, documentation)
+
 ### My assumptions
 - it's a public endpoint. I assume basic auth (like DDoS protection) will be available on the firewall/gateway level
 
 ### Implementation
 - Layered structure: controller, service, provider, client
-- 3d party integration with https://api.aviationapi.com
+- 3d party integration with https://api.aviationapi.com  
+Observability: 
+- Spring Actuator /health and /info endpoints
 
 ### Trade-offs
 - [Time limit] JsonNode used to handle JSON response from third party - probably we'll need fields mapping on our side
@@ -57,3 +62,4 @@ Maven
 ### Next Steps
 - Add validation for input ICAO code - that will lower incorrect requests earlier than they reach 3d party side
 - Add caching (Redis or other) - GET endpoint with rarely changed info is a perfect candidate for caching - that will significantly reduce the load for 3d party requests. Proposed TTL 1h-24h
+- Add swagger for API documentation
