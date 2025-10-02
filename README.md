@@ -46,14 +46,34 @@ Maven
 ### Time spent
 - 1.5h on MVC (basic functionality, basic logging, layered structure, documentation)
 
+### Testing
+
+Run all tests:
+```bash
+mvn test
+```
+
+There are two types of tests - integration and E2E. Since we have sometimes unstable 3d party, but also would like our CI build to not depend on E2E test with that 3d party integration.  
+
+1. Integration tests (spring boot context + mocked provider) can be run with command:
+```bash
+mvn test -Dgroups=integration
+```
+
+2. E2E test (spring boot context + real provider) can be run with command:
+```bash
+mvn test -Dgroups=e2e
+```
+
 ### My assumptions
 - it's a public endpoint. I assume basic auth (like DDoS protection) will be available on the firewall/gateway level
 
 ### Implementation
 - Layered structure: controller, service, provider, client
-- 3d party integration with https://api.aviationapi.com  
-Observability: 
-- Spring Actuator endpoints: health, info, loggers (non-prod profiles)
+- 3d party integration with https://api.aviationapi.com
+- Observability - Spring Actuator endpoints: health, info, loggers (non-prod profiles)
+- Observability - exposed prometheus
+- Tests - Integration and E2E
 
 ### Trade-offs
 - [Time limit] JsonNode used to handle JSON response from third party - probably we'll need fields mapping on our side
@@ -62,4 +82,6 @@ Observability:
 ### Next Steps
 - Add validation for input ICAO code - that will lower incorrect requests earlier than they reach 3d party side
 - Add caching (Redis or other) - GET endpoint with rarely changed info is a perfect candidate for caching - that will significantly reduce the load for 3d party requests. Proposed TTL 1h-24h
+- /actuator/prometheus needs to be available internally on prod, but unavailable from the public network
 - Add swagger for API documentation
+- E2E test needs to be excluded from CI build
