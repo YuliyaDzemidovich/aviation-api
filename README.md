@@ -73,13 +73,14 @@ mvn test -Dgroups=e2e
 - 3d party integration with https://api.aviationapi.com
 - Observability - Spring Actuator endpoints: health, info, loggers (non-prod profiles)
 - Observability - exposed prometheus
-- Resilience4j for retries and circuit breaker
+- Resilience4j for retries, circuit breaker and rate limiter
 - Tests - Integration and E2E
 
 ### Trade-offs
 - [Time limit] JsonNode used to handle JSON response from third party - probably we'll need fields mapping on our side
 - [Time limit] logs injection with user input (ICAO code) - that needs either input validation or no input logging
 - [Time limit] no security implemented
+- [Time limit] no dockerfile created, no ci/cd setup
 
 ### Next Steps
 - Add validation for input ICAO code - that will lower incorrect requests earlier than they reach 3d party side
@@ -88,3 +89,5 @@ mvn test -Dgroups=e2e
 - Add swagger for API documentation
 - E2E test needs to be excluded from CI build
 - Remove hardcoded values, extract test data
+- Switch properties to YAML ?
+- Add service discovery ?

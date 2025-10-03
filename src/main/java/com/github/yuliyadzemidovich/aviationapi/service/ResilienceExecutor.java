@@ -2,6 +2,8 @@ package com.github.yuliyadzemidovich.aviationapi.service;
 
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
+import io.github.resilience4j.ratelimiter.RateLimiter;
+import io.github.resilience4j.ratelimiter.RateLimiterRegistry;
 import io.github.resilience4j.reactor.circuitbreaker.operator.CircuitBreakerOperator;
 import io.github.resilience4j.reactor.retry.RetryOperator;
 import io.github.resilience4j.retry.Retry;
@@ -22,6 +24,7 @@ public class ResilienceExecutor {
 
     private final RetryRegistry retryRegistry;
     private final CircuitBreakerRegistry cbRegistry;
+    private final RateLimiterRegistry rtlRegistry;
 
     // sync wrapper
     public <T> T execute(String name, Supplier<T> action) {
@@ -31,10 +34,14 @@ public class ResilienceExecutor {
         Supplier<T> withRetry = Retry.decorateSupplier(retry, action);
 
         // add circuit breaker
-        CircuitBreaker cb = cbRegistry.circuitBreaker(name);
-        Supplier<T> withRetryAndCb = CircuitBreaker.decorateSupplier(cb, withRetry);
+        CircuitBreaker circuitBreaker = cbRegistry.circuitBreaker(name);
+        Supplier<T> withRetryAndCb = CircuitBreaker.decorateSupplier(circuitBreaker, withRetry);
 
-        return withRetryAndCb.get();
+        // add rate liming
+        RateLimiter rateLimiter = rtlRegistry.rateLimiter(name);
+        Supplier<T> withRetryAndCbAndRl = RateLimiter.decorateSupplier(rateLimiter, withRetryAndCb);
+
+        return withRetryAndCbAndRl.get();
     }
 
     // async wrapper
