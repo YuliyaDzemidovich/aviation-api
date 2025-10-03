@@ -17,4 +17,8 @@ public class ResponseDto<T> {
     public ResponseDto(T data) {
         this.data = data;
     }
+
+    public ResponseDto(ErrorDto error) {
+        this.error = error;
+    }
 }
